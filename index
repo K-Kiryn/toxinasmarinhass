@@ -1,0 +1,188 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ache os pares</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: url('https://www.worldatlas.com/r/w1200/upload/09/ac/bc/shutterstock-429394207.jpg') center center fixed;
+      background-size: cover;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(5, 120px);
+      gap: 10px;
+    }
+
+    .card {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      cursor: pointer;
+      background-color: #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .card img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+      position: absolute;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .card .front {
+      opacity: 1;
+    }
+
+    .card .back {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+
+
+
+
+<div id="text-decoration">
+<h1 style="color: white; font-size: 80px; text-align: center;">Encontre os pares!!!</h1>
+  <div id="game-board"></div>
+
+<script>
+  const cards = [
+    { id: 1, name: 'card1', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/d3/79/a7/d379a74b9452bfda64d72fb1b4e6c605.jpg' },
+    { id: 2, name: 'card2', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/e0/a5/08/e0a5082d15dd7ed09ded6918e85dcfd2.jpg' },
+    { id: 3, name: 'card3', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/a4/6c/77/a46c7765a1e7937dabe38d3b8a8d9ea7.jpg' },
+    { id: 4, name: 'card4', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/a2/06/4c/a2064c4e21ead6d6dd84b29c28e318f3.jpg' },
+    { id: 5, name: 'card5', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/b3/b8/4f/b3b84f0a61c27b1f4c9d75403bd37daa.jpg' },
+    { id: 6, name: 'card6', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/0f/f7/0a/0ff70ab66257f6762b3ad391d1081ef9.jpg' },
+	{ id: 7, name: 'card7', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/3d/10/e2/3d10e25f0436c76a7cebdac049ce2230.jpg' },
+	{ id: 8, name: 'card8', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/22/47/44/224744c6f3ef39dd544afd05f6c91875.jpg' },
+	{ id: 9, name: 'card9', frontImg: 'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/c2/7a/cb/c27acbe187039a253dd063750368f46d.jpg' },
+	{ id: 10, name: 'card10', frontImg:'https://i.pinimg.com/474x/ac/30/7b/ac307b18089aa87446feaa96720a49aa.jpg', backImg: 'https://i.pinimg.com/474x/88/63/91/886391ab37207ada45ca4e135f240da9.jpg' },
+  
+  
+  
+  
+  
+  ];
+
+  const doubledCards = cards.concat(cards);
+  let shuffledCards = [];
+
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
+  }
+
+  function createGameBoard() {
+    shuffledCards = shuffle(doubledCards);
+
+    const gameBoard = document.getElementById('game-board');
+
+    shuffledCards.forEach((card, index) => {
+      const cardElement = document.createElement('div');
+      cardElement.classList.add('card');
+      cardElement.dataset.index = index;
+
+      const cardFront = document.createElement('img');
+      cardFront.src = card.frontImg;
+      cardFront.classList.add('front');
+
+      const cardBack = document.createElement('img');
+      cardBack.src = card.backImg;
+      cardBack.classList.add('back');
+
+      cardElement.appendChild(cardFront);
+      cardElement.appendChild(cardBack);
+
+      cardElement.addEventListener('click', handleCardClick);
+      gameBoard.appendChild(cardElement);
+    });
+  }
+
+  let selectedCards = [];
+  let selectedIndexes = [];
+
+  function handleCardClick() {
+    const clickedCard = this;
+    const clickedIndex = clickedCard.dataset.index;
+
+    if (selectedIndexes.length < 2 && !selectedIndexes.includes(clickedIndex)) {
+      selectedCards.push(shuffledCards[clickedIndex]);
+      selectedIndexes.push(clickedIndex);
+
+      //frente e verso da carta
+      clickedCard.querySelector('.front').style.opacity = 1 - clickedCard.querySelector('.front').style.opacity;
+      clickedCard.querySelector('.back').style.opacity = 1 - clickedCard.querySelector('.back').style.opacity;
+
+      if (selectedCards.length === 2) {
+        setTimeout(checkMatch, 500);
+      }
+    }
+  }
+
+  function checkMatch() {
+    const [firstIndex, secondIndex] = selectedIndexes;
+    const [firstCard, secondCard] = selectedCards;
+
+    const firstCardElement = document.querySelector(`[data-index="${firstIndex}"]`);
+    const secondCardElement = document.querySelector(`[data-index="${secondIndex}"]`);
+
+    if (firstCard.id === secondCard.id) {
+      // Acerto
+      firstCardElement.removeEventListener('click', handleCardClick);
+      secondCardElement.removeEventListener('click', handleCardClick);
+    } else {
+     
+      // Erro -> Virar as cartas de volta
+      firstCardElement.querySelector('.front').style.opacity = 1;
+      firstCardElement.querySelector('.back').style.opacity = 0;
+
+      secondCardElement.querySelector('.front').style.opacity = 1;
+      secondCardElement.querySelector('.back').style.opacity = 0;
+    }
+
+    selectedCards = [];
+    selectedIndexes = [];
+
+    checkWin();
+  }
+
+  function checkWin() {
+    const allcards = document.querySelectorAll('card');
+    const matchedCards = document.querySelectorAll('.card[style*="opacity: 0;"]');
+
+    if(!matchedCards.length === allcards.length) {
+      alert('Parabéns! Você venceu!');
+    }
+  }
+
+  createGameBoard();
+
+//Kʚ★ɞ
+</script>
+</body>
+</style>
+</html>
+
